@@ -31,3 +31,18 @@
     transform: rotate(360deg);
   }
 }
+
+.piece{
+  height: 20px;
+  width: 20px;
+  margin: 1px;
+  display: inline-block;
+}
+
+.piece:hover{
+  cursor: pointer;
+}
+
+.board{
+  margin: 250px auto;
+}
