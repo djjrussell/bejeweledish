@@ -26,7 +26,10 @@ export class Row extends React.Component {
 
     render() {
         return (
-            <div className="row">
+            <div
+                className="row"
+                onClick={this.props.onClick}
+            >
                 {this.children}
             </div>
         )

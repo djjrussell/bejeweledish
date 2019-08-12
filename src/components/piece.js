@@ -11,24 +11,31 @@ export class Piece extends React.Component {
             column: this.props.column
         };
 
+        this.getRandomColor = this.getRandomColor.bind(this);
     }
 
     getRandomColor() {
 
-        const color = this.colors[Math.floor(Math.random() * this.colors.length)];
+        this.color = this.colors[Math.floor(Math.random() * this.colors.length)];
         return {
-            backgroundColor: color
+            backgroundColor: this.color
         };
     }
 
+
+
     render() {
         return (
+
             <div
                 className="piece"
                 data-row={this.state.row}
                 data-column={this.state.column}
                 style={this.getRandomColor()}
+                data-color={this.color}
+                onClick={this.props.onClick}
             />
+
         )
     }
 }
