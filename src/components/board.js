@@ -9,62 +9,34 @@ export class Board extends React.Component {
 
         this.state = {
             size: 5,
-            currentComponent: null
+            currentComponent: null,
+            scoreX: -1,
+            scoreY: -1,
+            scoreTotal: 0
         };
 
         this.rows = [];
-        this.checkForMatches = this.checkForMatches.bind(this);
 
         this.getRows();
-
+        this.checkY = this.checkY.bind(this);
     }
 
-    checkDown(t){
+    checkY(t, sibling) {
+        debugger;
+        let next = get(".piece[data-column='" + parseInt(t.dataset.column) + "']", t.parentElement[sibling]);
 
-    }
+        if (next && next.dataset.color == t.dataset.color) {
 
-    checkUp(t) {
+            let newScore = this.state.scoreY + 1;
 
-        let matched = 0;
+            this.setState({
+                scoreY: newScore
+            });
 
-        for(let i = 0; i < this.state.size; i++){
+            this.checkY(next);
 
-            let above = get(".piece[data-column='" + parseInt(t.dataset.column) + "']" , t.parentElement.previousSibling);
-
-            if(
-                t.parentElement.previousSibling &&
-                above.dataset.color == t.dataset.color
-            ){
-                matched++
-            }
 
         }
-
-        for(let i = 0; i < this.state.size; i++){
-
-            if(
-                t.parentElement.nextElementSibling &&
-                get(".piece[data-column='" + parseInt(t.dataset.column) + "']" , t.parentElement.nextElementSibling).dataset.color == t.dataset.color
-            ){
-                matched++
-            }
-
-        }
-
-        return matched;
-
-    }
-
-    checkLeftRight(t) {
-
-        let matched = 0;
-
-    }
-
-    checkForMatches() {
-
-        this.checkUpDown();
-        this.checkLeftRight();
 
     }
 
@@ -78,25 +50,9 @@ export class Board extends React.Component {
 
     }
 
-    // isAdjacent = (t) => {
-    //
-    //     const thisRow = parseInt(t.dataset.row);
-    //     const thisColumn = parseInt(t.dataset.column);
-    //     const thisColor = t.dataset.color;
-    //
-    //     return (
-    //         this.state.currentComponent.dataset.color == t.dataset.color &&
-    //         (
-    //             (get(".piece[data-row='" + (thisRow + 1) + "']") && thisColor == get(".piece[data-row='" + (thisRow + 1) + "']").dataset.color) ||
-    //             (get(".piece[data-row='" + (thisRow - 1) + "']") && thisColor == get(".piece[data-row='" + (thisRow - 1) + "']").dataset.color) ||
-    //             (get(".piece[data-column='" + (thisColumn + 1) + "']") && thisColor == get(".piece[data-column='" + (thisColumn + 1) + "']").dataset.color) ||
-    //             (get(".piece[data-column='" + (thisColumn - 1) + "']") && thisColor == get(".piece[data-column='" + (thisColumn - 1) + "']").dataset.color)
-    //         )
-    //     );
-    // };
-
     componentWillUpdate(nextProps, nextState, nextContext) {
-        if(this.state.currentComponent) {
+
+        if (this.state.currentComponent) {
 
             let currentRow = parseInt(this.state.currentComponent.dataset.row);
             let currentColumn = parseInt(this.state.currentComponent.dataset.column);
@@ -104,9 +60,11 @@ export class Board extends React.Component {
             let nextRow = parseInt(nextState.currentComponent.dataset.row);
             let nextColumn = parseInt(nextState.currentComponent.dataset.column);
 
-            debugger;
+            if (
+                (currentColumn == nextColumn && (currentRow + 1 == nextRow || currentRow - 1 == nextRow)) ||
+                (currentRow == nextRow && (currentColumn + 1 == nextColumn || currentColumn - 1 == nextColumn))
+            ) {
 
-            if(currentColumn == nextColumn && (currentRow+1 == nextRow || currentRow-1 == nextRow)){
                 let nextColor = nextState.currentComponent.dataset.color;
                 let thisColor = this.state.currentComponent.dataset.color;
 
@@ -115,20 +73,11 @@ export class Board extends React.Component {
 
                 nextState.currentComponent.dataset.color = thisColor;
                 nextState.currentComponent.style.backgroundColor = thisColor;
-            }
 
-            if(currentRow == nextRow && (currentColumn+1 == nextColumn || currentColumn-1 == nextColumn)){
-                let nextColor = nextState.currentComponent.dataset.color;
-                let thisColor = this.state.currentComponent.dataset.color;
-
-                this.state.currentComponent.dataset.color = nextColor;
-                this.state.currentComponent.style.backgroundColor = nextColor;
-
-                nextState.currentComponent.dataset.color = thisColor;
-                nextState.currentComponent.style.backgroundColor = thisColor;
             }
 
         }
+
     }
 
     handleClick = (e) => {
@@ -137,12 +86,8 @@ export class Board extends React.Component {
             currentComponent: e.target
         });
 
-        // const isAdjacent = this.isAdjacent(tile);
-        //
-        // if (isAdjacent) {
-        //
-        //
-        // }
+        this.checkY(e.target, "nextElementSibling");
+        this.checkY(e.target, "previousElementSibling");
 
     };
 
